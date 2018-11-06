@@ -4,11 +4,12 @@ import './App.css';
 import Person from './Person/Person';
 
 export default class App extends Component {
+  smartId = 100;
   state = {
     persons: [
-        {name: "Max", age: 28},
-        {name: "Manu", age: 29},
-        {name: "Stephanie", age: 26}
+        {name: "Max", age: 28, id: this.smartId++},
+        {name: "Manu", age: 29, id: this.smartId++},
+        {name: "Stephanie", age: 26, id: this.smartId++}
         ],
       showPersons: false
   };
@@ -21,14 +22,14 @@ export default class App extends Component {
 
   }
 
-  changeNameHandler = (event) => {
+  changeNameHandler = (event, id) => {
+      const newPersons = [...this.state.persons];
+      const index = newPersons.findIndex((el)=> el.id === id);
+      newPersons[index].name = event.target.value;
         this.setState(
             {
-                persons: [
-                    {name: event.target.value, age: 28},
-                    {name: "Manu", age: 29},
-                    {name: "Stephanie", age: 26}
-                ]
+             persons: newPersons
+
             })
     };
 
@@ -45,12 +46,13 @@ export default class App extends Component {
 
     let persons = null;
     if (this.state.showPersons) {
-      persons = this.state.persons.map(({name, age}, index) => {
+      persons = this.state.persons.map(({name, age, id}, index) => {
         return (
-          <Person
+          <Person key = {id}
               click = {() => this.deletePersonHandler(index)}
               name = {name}
-              age = {age} />
+              age = {age}
+              change = {(event) => this.changeNameHandler(event, id)}/>
         );
       });
     }
